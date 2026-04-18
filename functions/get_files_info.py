@@ -3,8 +3,8 @@ import os
 from google.genai import types
 
 
-def get_files_info(working_directory, directory=""):
-    absolute_wrk_directory = os.path.abspath(working_directory)
+def get_files_info(working_dir, directory=""):
+    absolute_wrk_directory = os.path.abspath(working_dir)
     target_dir = os.path.normpath(os.path.join(absolute_wrk_directory, directory))
     valid_target_dir = (
         os.path.commonpath([absolute_wrk_directory, target_dir])
