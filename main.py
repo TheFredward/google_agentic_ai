@@ -5,11 +5,17 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 
+from call_functions import available_functions
+from prompts import system_prompt
+
 
 def generate_content(client, prompt):
     response = client.models.generate_content(
-        model="gemini-2.5-flash-image",
+        model="gemini-2.5-flash-lite",
         contents=prompt,
+        config=types.GenerateContentConfig(
+            tools=[available_functions], system_instruction=system_prompt
+        ),
     )
     if response.usage_metadata is None:
         raise RuntimeError("Unable to complete request")
@@ -32,7 +38,11 @@ def main():
         print(f"User prompt: {args.user_prompt}")
         print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
         print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
-    print(response.text)
+    if response.function_calls is not None:
+        for text in response.function_calls:
+            print(f"Calling function: {text.name}({text.args})")
+    else:
+        print(response.text)
 
 
 if __name__ == "__main__":
