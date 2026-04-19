@@ -1,6 +1,8 @@
 import os
 import subprocess
 
+from google.genai import types
+
 
 def run_python_file(working_dir, file_path, args=None):
     abs_working_path = os.path.abspath(working_dir)
@@ -24,3 +26,24 @@ def run_python_file(working_dir, file_path, args=None):
             f"STDOUT: {program_status.stdout}\nSTDERR: {program_status.stderr}"
         )
     return output_string
+
+
+schema_run_python_file = types.FunctionDeclaration(
+    name="run_python_file",
+    description="Run the specified python script with optional arguments",
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={
+            "file_path": types.Schema(
+                type=types.Type.STRING,
+                description="Directory path to file to read from, relative to the working directory",
+            ),
+            "args": types.Schema(
+                type=types.Type.ARRAY,
+                items={"type": types.Type.STRING},
+                description="Optional args that can be passed to the program",
+            ),
+        },
+        required=["file_path"],
+    ),
+)
